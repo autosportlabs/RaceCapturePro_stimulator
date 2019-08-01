@@ -47,6 +47,19 @@ size_t serial_getline(SerialDriver *sdp, uint8_t *buf, size_t buf_len)
         return read;
 }
 
+
+void system_serial_init_SD1(uint32_t speed)
+{
+    static SerialConfig uart_cfg;
+    uart_cfg.speed=speed;
+
+    /* USART1 TX.       */
+    palSetPadMode(GPIOA, 9, PAL_STM32_MODE_ALTERNATE | PAL_STM32_OTYPE_PUSHPULL | PAL_STM32_OSPEED_HIGHEST | PAL_STM32_ALTERNATE(1));
+    /* USART1 RX.       */
+    palSetPadMode(GPIOA, 10, PAL_STM32_MODE_ALTERNATE | PAL_STM32_PUPDR_PULLUP | PAL_STM32_ALTERNATE(1));
+    sdStart(&SD1, &uart_cfg);
+}
+
 /*
  * Initialize connection for SD2 (STN1110)
  */
@@ -66,6 +79,7 @@ void system_serial_init_SD2(uint32_t speed)
 void system_serial_init()
 {
         system_serial_init_SD2(SD2_BAUD);
+        system_serial_init_SD1(SD1_BAUD);
 }
 
 uint8_t * get_test_buffer(void)
